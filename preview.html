@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8">
+<title>Romania Risk PRO</title>
+
+<style>
+body{
+    margin:0;
+    font-family:Arial;
+    display:flex;
+    height:100vh;
+    background:#111;
+}
+
+#panel{
+    width:300px;
+    background:#1c1c1c;
+    color:white;
+    padding:15px;
+}
+
+#mapWrap{
+    flex:1;
+    position:relative;
+    overflow:hidden;
+}
+
+#map{
+    width:100%;
+    user-select:none;
+}
+
+/* zonele județelor */
+.zone{
+    position:absolute;
+    border:2px solid rgba(255,255,255,0.3);
+    cursor:pointer;
+    background:rgba(255,255,255,0.05);
+    transition:0.2s;
+}
+
+.zone:hover{
+    border-color:yellow;
+}
+
+button,input{
+    width:100%;
+    margin-top:10px;
+    padding:10px;
+}
+
+#info{
+    margin-top:15px;
+    padding:10px;
+    background:#333;
+}
+</style>
+</head>
+<body>
+
+<div id="panel">
+<h2>🎮 Romania Risk PRO</h2>
+
+<input type="color" id="color" value="#ff0000">
+<input type="text" id="player" placeholder="Nume jucător">
+
+<button onclick="resetGame()">Reset</button>
+
+<div id="info">Selectează un județ</div>
+</div>
+
+<div id="mapWrap">
+
+<img id="map" src="harta-romaniei.jpg">
+
+<!-- 🔥 JUDEȚE (poziții calibrate pe imagine) -->
+
+<div class="zone" data-name="Cluj" style="left:420px;top:120px;width:80px;height:60px;"></div>
+<div class="zone" data-name="Bihor" style="left:320px;top:130px;width:80px;height:70px;"></div>
+<div class="zone" data-name="Timiș" style="left:260px;top:220px;width:90px;height:70px;"></div>
+<div class="zone" data-name="Arad" style="left:290px;top:170px;width:70px;height:60px;"></div>
+
+<div class="zone" data-name="Iași" style="left:620px;top:120px;width:80px;height:70px;"></div>
+<div class="zone" data-name="Bacău" style="left:580px;top:160px;width:80px;height:70px;"></div>
+<div class="zone" data-name="Suceava" style="left:560px;top:80px;width:90px;height:70px;"></div>
+
+<div class="zone" data-name="București" style="left:520px;top:300px;width:60px;height:50px;"></div>
+<div class="zone" data-name="Ilfov" style="left:510px;top:290px;width:80px;height:60px;"></div>
+
+</div>
+
+<script>
+
+const zones = document.querySelectorAll(".zone");
+
+let state = JSON.parse(localStorage.getItem("romania_risk") || "{}");
+
+function render(){
+    zones.forEach(z=>{
+        const name = z.dataset.name;
+
+        if(state[name]){
+            z.style.background = state[name].color;
+        }
+    });
+}
+render();
+
+zones.forEach(z=>{
+    z.addEventListener("click", ()=>{
+
+        const name = z.dataset.name;
+        const color = document.getElementById("color").value;
+        const player = document.getElementById("player").value || "Player";
+
+        state[name] = {color, player};
+
+        z.style.background = color;
+
+        document.getElementById("info").innerHTML =
+        `<b>${name}</b><br>👤 ${player}`;
+
+        localStorage.setItem("romania_risk", JSON.stringify(state));
+    });
+});
+
+function resetGame(){
+    localStorage.clear();
+    location.reload();
+}
+</script>
+
+</body>
+</html>
